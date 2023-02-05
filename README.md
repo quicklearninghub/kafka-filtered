@@ -11,7 +11,13 @@ Apache Kafka: 3.3.2
 
 ### To start:
 Run the KafkaFilteredApplication as main spring boot application.
+Provide VM options to activate different profiles.
 
+#### To run first consumer:
+-Dspring.profiles.active=newm
+
+#### To run second consumer:
+-Dspring.profiles.active=canc
 
 ### Request endpoint
 ### POST:
