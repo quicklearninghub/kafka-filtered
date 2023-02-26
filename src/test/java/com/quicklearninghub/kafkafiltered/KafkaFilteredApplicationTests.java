@@ -50,7 +50,7 @@ public class KafkaFilteredApplicationTests {
 	@Value(value = "${kafka.topic}")
 	private String TOPIC;
 	@Autowired
-	private RecordHeaderFilterStrategy recordHeaderFilterStrategy;
+	private RecordHeaderFilterStrategy<String, MyDTO> recordHeaderFilterStrategy;
 
 	@Autowired
 	private KafkaTemplate<String, MyDTO> kafkaTemplate;
@@ -86,7 +86,7 @@ public class KafkaFilteredApplicationTests {
 
 	@AfterEach
 	void tearDown() {
-		container.destroy();
+		container.stop();
 	}
 
 	@Test
@@ -98,7 +98,7 @@ public class KafkaFilteredApplicationTests {
 		// when publishing a NEWM event
 		kafkaTemplate.send(new ProducerRecord<>(TOPIC, null, key, message, getHeaders(message.getEventType()))).get();
 
-		// then
+		// then Record should be consumed
 		ConsumerRecord<String, MyDTO> received = records.poll(10, TimeUnit.SECONDS);
 		assertNotNull(received);
 		assertEquals(key, received.key());
@@ -117,7 +117,7 @@ public class KafkaFilteredApplicationTests {
 		// when publishing a CANC event
 		kafkaTemplate.send(new ProducerRecord<>(TOPIC, null, key, message, getHeaders(message.getEventType()))).get();
 
-		// then
+		// then Record should not be consumed
 		ConsumerRecord<String, MyDTO> received = records.poll(10, TimeUnit.SECONDS);
 		assertNull(received);
 	}
